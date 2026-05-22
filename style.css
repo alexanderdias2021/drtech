@@ -1,0 +1,235 @@
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: #0fd4c4;
+    color: #f3f3f3;
+}
+
+/* ===== HEADER ===== */
+header {
+    background: linear-gradient(135deg, #03f7ff, #dbfffb);
+    padding: 20px 48px;
+}
+
+.header-content {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+
+header h1 {
+    font-size: 50px;
+    font-weight: 700;
+    color: #f7f7f7;
+}
+
+header p {
+    color: rgba(252, 252, 252, 0.986);
+    font-size: 13px;
+    margin-top: 2px;
+}
+
+/* ===== NAV ===== */
+nav {
+    background: #2c8f87;
+    padding: 0 48px;
+    display: flex;
+    gap: 4px;
+}
+
+nav a {
+    color: rgba(255,255,255,0.75);
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 500;
+    padding: 14px 20px;
+    display: inline-block;
+    border-bottom: 3px solid transparent;
+    transition: color 0.2s, border-color 0.2s;
+}
+
+nav a:hover,
+nav a.activo {
+    color: #f3f3f3;
+    border-bottom-color: #ebebeb;
+}
+
+/* ===== HERO ===== */
+.hero {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 60px 48px;
+    background: #fff;
+    gap: 40px;
+    flex-wrap: wrap;
+}
+
+.hero-texto {
+    flex: 1;
+    min-width: 280px;
+}
+
+.hero-badge {
+    background: #f3f3f3;
+    color: #eee2e2;
+    font-size: 12px;
+    font-weight: 600;
+    padding: 5px 14px;
+    border-radius: 20px;
+    display: inline-block;
+    margin-bottom: 16px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.hero-texto h2 {
+    font-size: 38px;
+    font-weight: 800;
+      color: #42eee0;
+    line-height: 1.2;
+    margin-bottom: 16px;
+}
+
+.hero-texto h2 span {
+    color: #42eee0;
+}
+
+.hero-texto p {
+    font-size: 15px;
+    color: #060f11;
+    line-height: 1.7;
+    margin-bottom: 28px;
+    max-width: 440px;
+}
+
+.hero-botones {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.btn-primary {
+    background: #00fae5;
+    color: #fff;
+    border: none;
+    padding: 13px 28px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.1s;
+}
+
+.btn-primary:hover { background: #00eeda; }
+.btn-primary:active { transform: scale(0.97); }
+
+.btn-secondary {
+    background: transparent;
+    color: #00ffea;
+    border: 2px solid #00ffea;
+    padding: 13px 28px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.btn-secondary:hover { background: #f0fdfa; }
+
+.hero-imagen {
+    flex: 1;
+    min-width: 280px;
+    display: flex;
+    justify-content: center;
+}
+
+.hero-imagen img {
+    width: 100%;
+    max-width: 420px;
+    border-radius: 16px;
+    border: 3px solid #ccfbf1;
+}
+
+/* ===== SERVICIOS ===== */
+.servicios {
+    padding: 60px 48px 80px;
+    background: #f8fafc;
+    text-align: center;
+}
+
+.servicios h3 {
+    font-size: 26px;
+    font-weight: 700;
+    color: #2991ce;
+    margin-bottom: 36px;
+}
+
+.servicios-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 20px;
+}
+
+.servicio-card {
+    background: #fff;
+    border: 1px solid #e2e8f0;
+    border-radius: 14px;
+    padding: 28px 20px;
+    transition: transform 0.15s, border-color 0.15s;
+}
+
+.servicio-card:hover {
+    transform: translateY(-4px);
+    border-color: #0d9488;
+}
+
+.servicio-icono {
+    font-size: 32px;
+    margin-bottom: 14px;
+}
+
+.servicio-card h4 {
+    font-size: 15px;
+    font-weight: 700;
+    color: #e3e4e6;
+    margin-bottom: 8px;
+}
+
+.servicio-card p {
+    font-size: 13px;
+    color: #64748b;
+    line-height: 1.6;
+}
+
+/* ===== SECTION PRINCIPAL (otras páginas) ===== */
+.principal {
+    padding: 50px 48px 100px;
+    text-align: center;
+    background: #ffffff;
+}
+
+.principal h2 {
+    font-size: 24px;
+    font-weight: 700;
+    color: #0e7490;
+    margin-bottom: 12px;
+}
+
+/* ===== FOOTER ===== */
+footer {
+    background: #00d9ff;
+    color: rgba(255,255,255,0.85);
+    text-align: center;
+    padding: 16px;
+    font-size: 13px;
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+}

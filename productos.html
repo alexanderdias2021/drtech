@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Productos - Dr. Tech</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+    .filtros {
+        padding: 24px 40px 0;
+        background: #f8fafc;
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+        align-items: center;
+    }
+
+    .filtros input {
+        padding: 10px 16px;
+        border: 1px solid #e2e8f0;
+        border-radius: 8px;
+        font-size: 14px;
+        outline: none;
+        width: 240px;
+        background: #fff;
+    }
+
+    .filtros input:focus { border-color: #0d9488; }
+
+    .filtros span {
+        font-size: 13px;
+        color: #64748b;
+    }
+
+    .productos-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+        gap: 20px;
+        padding: 24px 40px 100px;
+        background: #f8fafc;
+    }
+
+    .producto-card {
+        background: #fff;
+        border: 1px solid #e2e8f0;
+        border-radius: 14px;
+        padding: 22px 18px 18px;
+        text-align: center;
+        transition: transform 0.15s, border-color 0.15s;
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+    }
+
+    .producto-card:hover {
+        transform: translateY(-3px);
+        border-color: #0d9488;
+    }
+
+    .producto-icono {
+        font-size: 36px;
+        margin-bottom: 6px;
+    }
+
+    .producto-card h3 {
+        font-size: 15px;
+        font-weight: 700;
+        color: #0f172a;
+        margin: 0;
+    }
+
+    .producto-card .marca {
+        font-size: 12px;
+        color: #0d9488;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .producto-card .modelo {
+        font-size: 12px;
+        color: #94a3b8;
+    }
+
+    .producto-card .detalles {
+        font-size: 12px;
+        color: #64748b;
+        line-height: 1.5;
+        background: #f8fafc;
+        border-radius: 6px;
+        padding: 6px 8px;
+        margin: 4px 0;
+    }
+
+    .producto-card .precio {
+        font-size: 22px;
+        font-weight: 800;
+        color: #0d9488;
+        margin: 4px 0;
+    }
+
+    .producto-card .estado {
+        display: inline-block;
+        font-size: 11px;
+        font-weight: 600;
+        padding: 3px 12px;
+        border-radius: 20px;
+        margin: 2px auto;
+    }
+
+    .estado-nuevo { background: #d1fae5; color: #065f46; }
+    .estado-usado { background: #fef9c3; color: #854d0e; }
+
+    .producto-card .cantidad {
+        font-size: 12px;
+        color: #94a3b8;
+    }
+
+    .btn-agregar {
+        background: #0d9488;
+        color: white;
+        border: none;
+        padding: 11px 20px;
+        border-radius: 8px;
+        font-size: 13px;
+        font-weight: 600;
+        cursor: pointer;
+        width: 100%;
+        margin-top: 8px;
+        transition: background 0.2s, transform 0.1s;
+    }
+
+    .btn-agregar:hover { background: #0f766e; }
+    .btn-agregar:active { transform: scale(0.97); }
+
+    .carrito-flotante {
+        position: fixed;
+        bottom: 70px;
+        right: 24px;
+        background: #0d9488;
+        color: white;
+        border: none;
+        padding: 14px 22px;
+        border-radius: 50px;
+        font-size: 14px;
+        font-weight: 600;
+        cursor: pointer;
+        z-index: 999;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .carrito-badge {
+        background: #fff;
+        color: #0d9488;
+        border-radius: 50%;
+        width: 22px;
+        height: 22px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 12px;
+        font-weight: 700;
+    }
+
+    .modal-overlay {
+        display: none;
+        position: fixed;
+        top: 0; left: 0;
+        width: 100%; height: 100%;
+        background: rgba(0,0,0,0.5);
+        z-index: 1000;
+        justify-content: center;
+        align-items: flex-start;
+        padding-top: 60px;
+    }
+
+    .modal-overlay.activo { display: flex; }
+
+    .modal {
+        background: #fff;
+        border-radius: 16px;
+        padding: 28px;
+        width: 90%;
+        max-width: 480px;
+        max-height: 80vh;
+        overflow-y: auto;
+    }
+
+    .modal h2 {
+        font-size: 18px;
+        color: #0f172a;
+        margin-bottom: 20px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .carrito-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 12px 0;
+        border-bottom: 0.5px solid #e2e8f0;
+        font-size: 13px;
+        gap: 8px;
+    }
+
+    .carrito-item-nombre { color: #0f172a; flex: 1; }
+    .carrito-item-precio { color: #0d9488; font-weight: 700; white-space: nowrap; }
+
+    .btn-eliminar {
+        background: #fee2e2;
+        border: none;
+        color: #ef4444;
+        cursor: pointer;
+        font-size: 12px;
+        font-weight: 600;
+        padding: 4px 8px;
+        border-radius: 6px;
+    }
+
+    .total-carrito {
+        font-size: 18px;
+        font-weight: 800;
+        color: #0d9488;
+        text-align: right;
+        margin-top: 16px;
+        padding-top: 12px;
+        border-top: 2px solid #d1fae5;
+    }
+
+    .btn-comprar {
+        background: #0d9488;
+        color: white;
+        border: none;
+        padding: 13px;
+        border-radius: 8px;
+        font-size: 14px;
+        font-weight: 700;
+        cursor: pointer;
+        width: 100%;
+        margin-top: 16px;
+        transition: background 0.2s;
+    }
+
+    .btn-comprar:hover { background: #0f766e; }
+
+    .btn-cerrar {
+        background: transparent;
+        color: #64748b;
+        border: 1px solid #e2e8f0;
+        padding: 10px;
+        border-radius: 8px;
+        font-size: 13px;
+        cursor: pointer;
+        width: 100%;
+        margin-top: 8px;
+    }
+
+    #cargando {
+        text-align: center;
+        padding: 60px;
+        color: #64748b;
+        font-size: 15px;
+    }
+
+    .carrito-vacio {
+        text-align: center;
+        padding: 30px;
+        color: #94a3b8;
+        font-size: 14px;
+    }
+</style>
+</head>
+<body>
+
+    <header>
+        <h1>Dr. Tech</h1>
+        <p>Catálogo de Productos</p>
+    </header>
+
+    <nav>
+        <a href="index.html">Inicio</a>
+        <a href="productos.html">Productos</a>
+        <a href="clientes.html">Clientes</a>
+        <a href="reportes.html">Reportes</a>
+    </nav>
+
+    <div class="filtros">
+    <input type="text" id="buscador" placeholder="Buscar producto..." oninput="filtrarProductos()">
+    <span id="totalProductos"></span>
+</div>
+    <div id="cargando">Cargando productos...</div>
+    <div class="productos-grid" id="productosGrid"></div>
+
+    <button class="carrito-flotante" onclick="abrirCarrito()">
+    🛒 Carrito
+    <span class="carrito-badge" id="contadorCarrito">0</span>
+</button>
+
+    <div class="modal-overlay" id="modalCarrito">
+        <div class="modal">
+            <h2>🛒 Tu carrito</h2>
+            <div id="listaCarrito"></div>
+            <div class="total-carrito" id="totalCarrito"></div>
+            <button class="btn-comprar" onclick="confirmarCompra()">Confirmar compra</button>
+            <button class="btn-cerrar" onclick="cerrarCarrito()">Cerrar</button>
+        </div>
+    </div>
+
+    <footer>
+        <p>© 2026 - Dr. Tech</p>
+    </footer>
+<script>
+    let carrito = [];
+
+    async function cargarProductos() {
+        try {
+            const res = await fetch('http://localhost:3000/productos');
+            const productos = await res.json();
+            document.getElementById('cargando').style.display = 'none';
+
+            const grid = document.getElementById('productosGrid');
+            productos.forEach(p => {
+                const card = document.createElement('div');
+                card.className = 'producto-card';
+                card.innerHTML = `
+                    <h3>${p.productos}</h3>
+                    <div class="marca">${p.marca}</div>
+                    <div class="modelo">${p.modelo}</div>
+                    <div class="detalles">${p.detalles}</div>
+                    <div class="precio">$${parseFloat(p.precio).toFixed(2)}</div>
+                    <span class="estado ${p.estado === 'Nuevo' ? 'estado-nuevo' : 'estado-usado'}">${p.estado}</span>
+                    <div class="cantidad">Stock: ${p.cantidad} unidades</div>
+                    <button class="btn-agregar" onclick='agregarAlCarrito(${JSON.stringify(p)})'>
+                        Agregar al carrito
+                    </button>
+                `;
+                grid.appendChild(card);
+            });
+
+            document.getElementById('totalProductos').textContent = `${productos.length} productos encontrados`;
+
+        } catch (err) {
+            document.getElementById('cargando').textContent = 'Error cargando productos. Verifica que el servidor esté corriendo.';
+        }
+    }
+
+    function agregarAlCarrito(producto) {
+        const existe = carrito.find(p => p.codigo === producto.codigo);
+        if (existe) {
+            existe.qty += 1;
+        } else {
+            carrito.push({ ...producto, qty: 1 });
+        }
+        document.getElementById('contadorCarrito').textContent = carrito.reduce((a, p) => a + p.qty, 0);
+        alert(`"${producto.productos}" agregado al carrito ✓`);
+    }
+
+    function abrirCarrito() {
+        const lista = document.getElementById('listaCarrito');
+        lista.innerHTML = '';
+
+        if (carrito.length === 0) {
+            lista.innerHTML = '<p style="color:#94a3b8;text-align:center;padding:20px;">El carrito está vacío</p>';
+            document.getElementById('totalCarrito').textContent = '';
+        } else {
+            let total = 0;
+            carrito.forEach((p, i) => {
+                const subtotal = p.qty * parseFloat(p.precio);
+                total += subtotal;
+                lista.innerHTML += `
+                    <div class="carrito-item">
+                        <span class="carrito-item-nombre">${p.productos} x${p.qty}</span>
+                        <span class="carrito-item-precio">$${subtotal.toFixed(2)}</span>
+                        <button class="btn-eliminar" onclick="eliminarDelCarrito(${i})">✕</button>
+                    </div>
+                `;
+            });
+            document.getElementById('totalCarrito').textContent = `Total: $${total.toFixed(2)}`;
+        }
+
+        document.getElementById('modalCarrito').classList.add('activo');
+    }
+
+    function cerrarCarrito() {
+        document.getElementById('modalCarrito').classList.remove('activo');
+    }
+
+    function eliminarDelCarrito(index) {
+        carrito.splice(index, 1);
+        document.getElementById('contadorCarrito').textContent = carrito.reduce((a, p) => a + p.qty, 0);
+        abrirCarrito();
+    }
+async function confirmarCompra() {
+    if (carrito.length === 0) {
+        alert('El carrito está vacío');
+        return;
+    }
+
+    const cedula = prompt('Ingresa tu número de cédula para confirmar la compra:');
+
+    if (!cedula || cedula.trim() === '') {
+        alert('Debes ingresar tu cédula para continuar.');
+        return;
+    }
+    try {
+        const verificar = await fetch(`http://localhost:3000/verificar-cliente/${cedula.trim()}`);
+        const cliente = await verificar.json();
+
+        if (!cliente.existe) {
+            const ir = confirm(
+                '❌ No encontramos una cuenta con esa cédula.\n\n' +
+                '¿Deseas registrarte ahora para poder comprar?'
+            );
+            if (ir) {
+                window.location.href = 'clientes.html';
+            }
+            return;
+        }
+
+    } catch (err) {
+        alert('No se pudo verificar el cliente. Verifica que el servidor esté corriendo.');
+        return;
+    }
+    try {
+        const res = await fetch('http://localhost:3000/comprar', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ cedula: cedula.trim(), items: carrito })
+        });
+
+        const resultado = await res.json();
+
+        if (resultado.success) {
+            carrito = [];
+            document.getElementById('contadorCarrito').textContent = 0;
+            cerrarCarrito();
+            window.location.href = 'compra_exitosa.html';
+        } else {
+            alert('Error al procesar la compra: ' + resultado.error);
+        }
+    } catch (err) {
+        alert('No se pudo conectar con el servidor.');
+    }
+}
+
+    function filtrarProductos() {
+        const texto = document.getElementById('buscador').value.toLowerCase();
+        const cards = document.querySelectorAll('.producto-card');
+        let visibles = 0;
+        cards.forEach(card => {
+            const nombre = card.querySelector('h3').textContent.toLowerCase();
+            const marca = card.querySelector('.marca').textContent.toLowerCase();
+            if (nombre.includes(texto) || marca.includes(texto)) {
+                card.style.display = '';
+                visibles++;
+            } else {
+                card.style.display = 'none';
+            }
+        });
+        document.getElementById('totalProductos').textContent = `${visibles} productos encontrados`;
+    }
+
+    cargarProductos();
+</script>
+</body>
+</html>

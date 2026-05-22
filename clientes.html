@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registrar Cliente - Dr. Tech</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .pagina-registro {
+            min-height: calc(100vh - 200px);
+            background: #f8fafc;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 40px 20px 80px;
+        }
+
+        .registro-card {
+            background: #fff;
+            border-radius: 16px;
+            border: 1px solid #e2e8f0;
+            padding: 40px;
+            width: 100%;
+            max-width: 520px;
+        }
+
+        .registro-card .icono-top {
+            width: 56px;
+            height: 56px;
+            background: #ccfbf1;
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+
+        .registro-card h2 {
+            font-size: 22px;
+            font-weight: 700;
+            color: #0f172a;
+            margin-bottom: 6px;
+        }
+
+        .registro-card .subtitulo {
+            font-size: 14px;
+            color: #64748b;
+            margin-bottom: 28px;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 14px;
+        }
+
+        .form-grupo {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .form-grupo.full {
+            grid-column: span 2;
+        }
+
+        .form-grupo label {
+            font-size: 12px;
+            font-weight: 600;
+            color: #475569;
+            text-transform: uppercase;
+            letter-spacing: 0.4px;
+        }
+
+        .form-grupo input {
+            padding: 11px 14px;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 14px;
+            color: #0f172a;
+            outline: none;
+            transition: border-color 0.2s;
+            background: #f8fafc;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        .form-grupo input:focus {
+            border-color: #0d9488;
+            background: #fff;
+        }
+
+        .form-grupo input::placeholder {
+            color: #94a3b8;
+        }
+
+        .btn-registrar {
+            background: #0d9488;
+            color: white;
+            border: none;
+            padding: 13px;
+            border-radius: 8px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 20px;
+            transition: background 0.2s, transform 0.1s;
+        }
+
+        .btn-registrar:hover { background: #0f766e; }
+        .btn-registrar:active { transform: scale(0.98); }
+
+        .mensaje-error {
+            background: #fee2e2;
+            color: #991b1b;
+            border-radius: 8px;
+            padding: 10px 14px;
+            font-size: 13px;
+            margin-top: 14px;
+            display: none;
+        }
+
+        .divider {
+            border: none;
+            border-top: 1px solid #e2e8f0;
+            margin: 24px 0 0;
+        }
+
+        .login-link {
+            text-align: center;
+            font-size: 13px;
+            color: #64748b;
+            margin-top: 16px;
+        }
+
+        .login-link a {
+            color: #0d9488;
+            font-weight: 600;
+            text-decoration: none;
+        }
+
+        @media (max-width: 500px) {
+            .form-grid { grid-template-columns: 1fr; }
+            .form-grupo.full { grid-column: span 1; }
+            .registro-card { padding: 28px 20px; }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>Dr. Tech</h1>
+        <p>Registro de Clientes</p>
+    </header>
+
+    <nav>
+        <a href="index.html">Inicio</a>
+        <a href="productos.html">Productos</a>
+        <a href="clientes.html" class="activo">Clientes</a>
+        <a href="reportes.html">Reportes</a>
+    </nav>
+
+    <div class="pagina-registro">
+        <div class="registro-card">
+
+            <div class="icono-top">👤</div>
+            <h2>Crear cuenta</h2>
+            <p class="subtitulo">Completa los datos para registrarte en Dr. Tech</p>
+
+            <form id="formCliente">
+                <div class="form-grid">
+
+                    <div class="form-grupo">
+                        <label>Cédula</label>
+                        <input type="text" id="cedula" placeholder="0000000000" required>
+                    </div>
+
+                    <div class="form-grupo">
+                        <label>Usuario</label>
+                        <input type="text" id="usuario" placeholder="mi_usuario" required>
+                    </div>
+
+                    <div class="form-grupo full">
+                        <label>Nombre completo</label>
+                        <input type="text" id="nombre" placeholder="Juan Pérez" required>
+                    </div>
+
+                    <div class="form-grupo full">
+                        <label>Correo electrónico</label>
+                        <input type="email" id="correo" placeholder="correo@ejemplo.com" required>
+                    </div>
+
+                    <div class="form-grupo">
+                        <label>Contraseña</label>
+                        <input type="password" id="contraseña" placeholder="••••••••" required>
+                    </div>
+
+                    <div class="form-grupo">
+                        <label>Teléfono</label>
+                        <input type="tel" id="telefono" placeholder="0987654321" required>
+                    </div>
+
+                    <div class="form-grupo full">
+                        <label>Dirección</label>
+                        <input type="text" id="direccion" placeholder="Av. Principal 123" required>
+                    </div>
+
+                    <div class="form-grupo full">
+                        <label>Ciudad</label>
+                        <input type="text" id="ciudad" placeholder="Quito" required>
+                    </div>
+
+                </div>
+
+                <button type="submit" class="btn-registrar">Crear cuenta →</button>
+            </form>
+
+            <div class="mensaje-error" id="mensaje"></div>
+
+            <hr class="divider">
+            <p class="login-link">¿Ya tienes cuenta? <a href="index.html">Vol

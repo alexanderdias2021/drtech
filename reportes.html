@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reportes - Dr. Tech</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .reportes-container {
+            padding: 30px 40px 100px;
+            background: #f8fafc;
+            min-height: calc(100vh - 200px);
+        }
+
+        .tabs {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 24px;
+            flex-wrap: wrap;
+        }
+
+        .tab {
+            padding: 10px 22px;
+            border-radius: 8px;
+            border: 1px solid #e2e8f0;
+            background: #fff;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            color: #64748b;
+            transition: all 0.2s;
+        }
+
+        .tab.activo {
+            background: #0d9488;
+            color: #fff;
+            border-color: #0d9488;
+        }
+
+        .tab:hover:not(.activo) {
+            border-color: #0d9488;
+            color: #0d9488;
+        }
+
+        .resumen-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 16px;
+            margin-bottom: 28px;
+        }
+
+        .resumen-card {
+            background: #fff;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 20px;
+        }
+
+        .resumen-card .label {
+            font-size: 12px;
+            color: #64748b;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.4px;
+            margin-bottom: 8px;
+        }
+
+        .resumen-card .valor {
+            font-size: 26px;
+            font-weight: 800;
+            color: #0d9488;
+        }
+
+        .resumen-card .sub {
+            font-size: 12px;
+            color: #94a3b8;
+            margin-top: 4px;
+        }
+
+        .tabla-container {
+            background: #fff;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .tabla-header {
+            padding: 16px 20px;
+            border-bottom: 1px solid #e2e8f0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .tabla-header h3 {
+            font-size: 15px;
+            font-weight: 700;
+            color: #0f172a;
+        }
+
+        .btn-exportar {
+            background: #0d9488;
+            color: #fff;
+            border: none;
+            padding: 8px 18px;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .btn-exportar:hover { background: #0f766e; }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+        }
+
+        thead {
+            background: #f8fafc;
+        }
+
+        th {
+            padding: 12px 16px;
+            text-align: left;
+            font-weight: 600;
+            color: #475569;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.4px;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        td {
+            padding: 12px 16px;
+            color: #0f172a;
+            border-bottom: 0.5px solid #f1f5f9;
+        }
+
+        tr:last-child td { border-bottom: none; }
+        tr:hover td { background: #f8fafc; }
+
+        .badge-codigo {
+            background: #e0f2fe;
+            color: #0369a1;
+            padding: 3px 8px;
+            border-radius: 6px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+        .precio-td {
+            color: #0d9488;
+            font-weight: 700;
+        }
+
+        .sin-datos {
+            text-align: center;
+            padding: 40px;
+            color: #94a3b8;
+            font-size: 14px;
+        }
+
+        .seccion { display: none; }
+        .seccion.activo { display: block; }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>Dr. Tech</h1>
+        <p>Reportes de Ventas</p>
+    </header>
+
+    <nav>
+        <a href="index.html">Inicio</a>
+        <a href="productos.html">Productos</a>
+        <a href="clientes.html">Clientes</a>
+        <a href="reportes.html" class="activo">Reportes</a>
+    </nav>
+
+    <div class="reportes-container">
+
+        <div class="tabs">
+            <button class="tab activo" onclick="mostrarSeccion('diario', this)">📅 Reporte Diario</button>
+            <button class="tab" onclick="mostrarSeccion('mensual', this)">📆 Reporte Mensual</button>
+            <button class="tab" onclick="mostrarSeccion('resumen', this)">📊 Resumen por Producto</button>
+        </div>
+
+        <!-- DIARIO -->
+        <div class="seccion activo" id="sec-diario">
+            <div class="resumen-cards" id="cards-diario"></div>
+            <div class="tabla-container">
+                <div class="tabla-header">
+                    <h3>Ventas de hoy</h3>
+                    <button class="btn-exportar" onclick="exportarCSV('diario')">⬇ Exportar CSV</button>
+                </div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Código</th>
+                            <th>Producto</th>
+                            <th>Cliente</th>
+                            <th>Teléfono</th>
+                            <th>Cantidad</th>
+                            <th>Precio</th>
+                            <th>Fecha</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tabla-diario"></tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- MENSUAL -->
+        <div class="seccion" id="sec-mensual">
+            <div class="resumen-cards" id="cards-mensual"></div>
+            <div class="tabla-container">
+                <div class="tabla-header">
+                    <h3>Ventas del mes</h3>
+                    <button class="btn-exportar" onclick="exportarCSV('mensual')">⬇ Exportar CSV</button>
+                </div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Código</th>
+                            <th>Producto</th>
+                            <th>Cliente</th>
+                            <th>Teléfono</th>
+                            <th>Cantidad</th>
+                            <th>Precio</th>
+                            <th>Fecha</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tabla-mensual"></tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- RESUMEN -->
+        <div class="seccion" id="sec-resumen">
+            <div class="tabla-container">
+                <div class="tabla-header">
+                    <h3>Resumen por producto — mes actual</h3>
+                    <button class="btn-exportar" onclick="exportarCSV('resumen')">⬇ Exportar CSV</button>
+                </div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Código</th>
+                            <th>Producto</th>
+                            <th>Unidades vendidas</th>
+                            <th>Núm. ventas</th>
+                            <th>Total ingresos</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tabla-resumen"></tbody>
+                </table>
+            </div>
+        </div>
+
+    </div>
+
+    <footer>
+        <p>© 2026 - Dr. Tech</p>
+    </footer>
+
+    <script>
+        let datosCache = { diario: [], mensual: [], resumen: [] };
+
+        function mostrarSeccion(id, btn) {
+            document.querySelectorAll('.seccion').forEach(s => s.classList.remove('activo'));
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('activo'));
+            document.getElementById('sec-' + id).classList.add('activo');
+            btn.classList.add('activo');
+        }
+
+        function llenarTabla(id, datos, tipo) {
+            const tbody = document.getElementById('tabla-' + id);
+            tbody.innerHTML = '';
+
+            if (datos.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="7" class="sin-datos">No hay datos para mostrar</td></tr>`;
+                return;
+            }
+
+            datos.forEach(r => {
+                if (tipo === 'resumen') {
+                    tbody.innerHTML += `
+                        <tr>
+                            <td><span class="badge-codigo">${r.codigo}</span></td>
+                            <td>${r.producto}</td>
+                            <td>${r.total_vendido}</td>
+                            <td>${r.num_ventas}</td>
+                            <td class="precio-td">$${parseFloat(r.total_ingresos).toFixed(2)}</td>
+                        </tr>`;
+                } else {
+                    tbody.innerHTML += `
+                        <tr>
+                            <td><span class="badge-codigo">${r.codigo}</span></td>
+                            <td>${r.producto}</td>
+                            <td>${r.nombre || r.cedula}</td>
+                            <td>${r.telefono || '—'}</td>
+                            <td>${r.cantidad}</td>
+                            <td class="precio-td">$${parseFloat(r.precio).toFixed(2)}</td>
+                            <td>${r.fecha}</td>
+                        </tr>`;
+                }
+            });
+        }
+
+        function llenarCards(id, datos) {
+            const total = datos.reduce((a, r) => a + parseFloat(r.precio) * r.cantidad, 0);
+            const unidades = datos.reduce((a, r) => a + r.cantidad, 0);
+            const clientes = new Set(datos.map(r => r.cedula)).size;
+
+            document.getElementById('cards-' + id).innerHTML = `
+                <div class="resumen-card">
+                    <div class="label">Total ingresos</div>
+                    <div class="valor">$${total.toFixed(2)}</div>
+                    <div class="sub">${id === 'diario' ? 'Hoy' : 'Este mes'}</div>
+                </div>
+                <div class="resumen-card">
+                    <div class="label">Ventas realizadas</div>
+                    <div class="valor">${datos.length}</div>
+                    <div class="sub">Transacciones</div>
+                </div>
+                <div class="resumen-card">
+                    <div class="label">Unidades vendidas</div>
+                    <div class="valor">${unidades}</div>
+                    <div class="sub">Productos</div>
+                </div>
+                <div class="resumen-card">
+                    <div class="label">Clientes únicos</div>
+                    <div class="valor">${clientes}</div>
+                    <div class="sub">Compradores</div>
+                </div>
+            `;
+        }
+
+        function exportarCSV(tipo) {
+            const datos = datosCache[tipo];
+            if (!datos.length) { alert('No hay datos para exportar'); return; }
+
+            let csv = '';
+            if (tipo === 'resumen') {
+                csv = 'Código,Producto,Unidades Vendidas,Num Ventas,Total Ingresos\n';
+                datos.forEach(r => {
+                    csv += `${r.codigo},${r.producto},${r.total_vendido},${r.num_ventas},$${parseFloat(r.total_ingresos).toFixed(2)}\n`;
+                });
+            } else {
+                csv = 'Código,Producto,Cliente,Teléfono,Cantidad,Precio,Fecha\n';
+                datos.forEach(r => {
+                    csv += `${r.codigo},${r.producto},${r.nombre || r.cedula},${r.telefono || ''},${r.cantidad},$${parseFloat(r.precio).toFixed(2)},${r.fecha}\n`;
+                });
+            }
+
+            const blob = new Blob([csv], { type: 'text/csv' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `reporte_${tipo}_drtech.csv`;
+            a.click();
+        }
+
+        async function cargarTodo() {
+            try {
+                const [diario, mensual, resumen] = await Promise.all([
+                    fetch('http://localhost:3000/reporte/diario').then(r => r.json()),
+                    fetch('http://localhost:3000/reporte/mensual').then(r => r.json()),
+                    fetch('http://localhost:3000/reporte/resumen').then(r => r.json())
+                ]);
+
+                datosCache = { diario, mensual, resumen };
+
+                llenarCards('diario', diario);
+                llenarCards('mensual', mensual);
+                llenarTabla('diario', diario, 'normal');
+                llenarTabla('mensual', mensual, 'normal');
+                llenarTabla('resumen', resumen, 'resumen');
+
+            } catch (err) {
+                console.error('Error cargando reportes:', err);
+            }
+        }
+
+        cargarTodo();
+    </script>
+
+</body>
+</html>
