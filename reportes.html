@@ -370,9 +370,9 @@
         async function cargarTodo() {
             try {
                 const [diario, mensual, resumen] = await Promise.all([
-                    fetch('http://localhost:3000/reporte/diario').then(r => r.json()),
-                    fetch('http://localhost:3000/reporte/mensual').then(r => r.json()),
-                    fetch('http://localhost:3000/reporte/resumen').then(r => r.json())
+                    fetch('https://romantic-joy-production-c58c.up.railway.app/reporte/diario').then(r => r.json()),
+                    fetch('https://romantic-joy-production-c58c.up.railway.app/reporte/mensual').then(r => r.json()),
+                    fetch('https://romantic-joy-production-c58c.up.railway.app/reporte/resumen').then(r => r.json())
                 ]);
 
                 datosCache = { diario, mensual, resumen };

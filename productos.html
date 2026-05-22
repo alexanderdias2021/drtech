@@ -318,7 +318,7 @@
 
     async function cargarProductos() {
         try {
-            const res = await fetch('http://localhost:3000/productos');
+            const res = await fetch('https://romantic-joy-production-c58c.up.railway.app/productos');
             const productos = await res.json();
             document.getElementById('cargando').style.display = 'none';
 
@@ -407,7 +407,7 @@ async function confirmarCompra() {
         return;
     }
     try {
-        const verificar = await fetch(`http://localhost:3000/verificar-cliente/${cedula.trim()}`);
+        const verificar = await fetch(`https://romantic-joy-production-c58c.up.railway.app/verificar-cliente/${cedula.trim()}`);
         const cliente = await verificar.json();
 
         if (!cliente.existe) {
@@ -426,7 +426,7 @@ async function confirmarCompra() {
         return;
     }
     try {
-        const res = await fetch('http://localhost:3000/comprar', {
+        const res = await fetch('https://romantic-joy-production-c58c.up.railway.app/comprar', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ cedula: cedula.trim(), items: carrito })

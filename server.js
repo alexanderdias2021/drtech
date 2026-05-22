@@ -143,5 +143,5 @@ app.get('/reporte/resumen', (req, res) => {
     });
 });
 app.listen(3000, () => {
-    console.log('Servidor corriendo en http://localhost:3000 ✅');
+    console.log('Servidor corriendo en https://romantic-joy-production-c58c.up.railway.app ✅');
 });
