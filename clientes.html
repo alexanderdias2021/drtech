@@ -61,9 +61,7 @@
             gap: 5px;
         }
 
-        .form-grupo.full {
-            grid-column: span 2;
-        }
+        .form-grupo.full { grid-column: span 2; }
 
         .form-grupo label {
             font-size: 12px;
@@ -91,9 +89,7 @@
             background: #fff;
         }
 
-        .form-grupo input::placeholder {
-            color: #94a3b8;
-        }
+        .form-grupo input::placeholder { color: #94a3b8; }
 
         .btn-registrar {
             background: #0d9488;
@@ -172,47 +168,38 @@
 
             <form id="formCliente">
                 <div class="form-grid">
-
                     <div class="form-grupo">
                         <label>Cédula</label>
                         <input type="text" id="cedula" placeholder="0000000000" required>
                     </div>
-
                     <div class="form-grupo">
                         <label>Usuario</label>
                         <input type="text" id="usuario" placeholder="mi_usuario" required>
                     </div>
-
                     <div class="form-grupo full">
                         <label>Nombre completo</label>
                         <input type="text" id="nombre" placeholder="Juan Pérez" required>
                     </div>
-
                     <div class="form-grupo full">
                         <label>Correo electrónico</label>
                         <input type="email" id="correo" placeholder="correo@ejemplo.com" required>
                     </div>
-
                     <div class="form-grupo">
                         <label>Contraseña</label>
                         <input type="password" id="contraseña" placeholder="••••••••" required>
                     </div>
-
                     <div class="form-grupo">
                         <label>Teléfono</label>
                         <input type="tel" id="telefono" placeholder="0987654321" required>
                     </div>
-
                     <div class="form-grupo full">
                         <label>Dirección</label>
                         <input type="text" id="direccion" placeholder="Av. Principal 123" required>
                     </div>
-
                     <div class="form-grupo full">
                         <label>Ciudad</label>
                         <input type="text" id="ciudad" placeholder="Quito" required>
                     </div>
-
                 </div>
 
                 <button type="submit" class="btn-registrar">Crear cuenta →</button>
@@ -221,4 +208,55 @@
             <div class="mensaje-error" id="mensaje"></div>
 
             <hr class="divider">
-            <p class="login-link">¿Ya tienes cuenta? <a href="index.html">Vol
+            <p class="login-link">¿Ya tienes cuenta? <a href="index.html">Volver al inicio</a></p>
+
+        </div>
+    </div>
+
+    <footer>
+        <p>© 2026 - Dr. Tech</p>
+    </footer>
+
+    <script>
+        const API = 'https://drtech-production.up.railway.app';
+
+        document.getElementById('formCliente').addEventListener('submit', async function(e) {
+            e.preventDefault();
+
+            const datos = {
+                cedula:     document.getElementById('cedula').value,
+                nombre:     document.getElementById('nombre').value,
+                usuario:    document.getElementById('usuario').value,
+                correo:     document.getElementById('correo').value,
+                contraseña: document.getElementById('contraseña').value,
+                telefono:   document.getElementById('telefono').value,
+                direccion:  document.getElementById('direccion').value,
+                ciudad:     document.getElementById('ciudad').value
+            };
+
+            try {
+                const respuesta = await fetch(`${API}/registrar`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(datos)
+                });
+
+                const resultado = await respuesta.json();
+
+                if (resultado.success) {
+                    window.location.href = 'registro_exitoso.html';
+                } else {
+                    const msg = document.getElementById('mensaje');
+                    msg.textContent = 'Error: ' + resultado.error;
+                    msg.style.display = 'block';
+                }
+            } catch (error) {
+                const msg = document.getElementById('mensaje');
+                msg.textContent = 'No se pudo conectar con el servidor.';
+                msg.style.display = 'block';
+            }
+        });
+    </script>
+
+</body>
+</html>
