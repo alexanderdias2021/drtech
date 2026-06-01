@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detalle de Producto - Dr. Tech</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .detalle-container {
+            padding: 40px;
+            background: #f8fafc;
+            min-height: calc(100vh - 200px);
+        }
+
+        .breadcrumb {
+            font-size: 13px;
+            color: #64748b;
+            margin-bottom: 24px;
+        }
+
+        .breadcrumb a {
+            color: #0d9488;
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .breadcrumb a:hover { text-decoration: underline; }
+
+        .detalle-card {
+            background: #fff;
+            border: 1px solid #e2e8f0;
+            border-radius: 16px;
+            padding: 40px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 48px;
+            max-width: 900px;
+        }
+
+        .producto-imagen-placeholder {
+            background: linear-gradient(135deg, #ccfbf1, #e0f2fe);
+            border-radius: 12px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 280px;
+            border: 1px solid #99f6e4;
+        }
+
+        .producto-imagen-placeholder .icono-grande {
+            font-size: 80px;
+            margin-bottom: 12px;
+        }
+
+        .producto-imagen-placeholder p {
+            font-size: 13px;
+            color: #0d9488;
+            font-weight: 500;
+        }
+
+        .detalle-info { display: flex; flex-direction: column; gap: 16px; }
+
+        .detalle-badge {
+            display: inline-block;
+            font-size: 11px;
+            font-weight: 700;
+            padding: 4px 12px;
+            border-radius: 20px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            width: fit-content;
+        }
+
+        .badge-nuevo { background: #d1fae5; color: #065f46; }
+        .badge-usado { background: #fef9c3; color: #854d0e; }
+
+        .detalle-nombre {
+            font-size: 28px;
+            font-weight: 800;
+            color: #0f172a;
+            line-height: 1.2;
+        }
+
+        .detalle-marca {
+            font-size: 14px;
+            color: #0d9488;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .detalle-precio {
+            font-size: 36px;
+            font-weight: 800;
+            color: #0d9488;
+        }
+
+        .detalle-tabla {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+        }
+
+        .detalle-tabla tr {
+            border-bottom: 0.5px solid #f1f5f9;
+        }
+
+        .detalle-tabla tr:last-child { border-bottom: none; }
+
+        .detalle-tabla td {
+            padding: 10px 0;
+        }
+
+        .detalle-tabla td:first-child {
+            color: #64748b;
+            font-weight: 600;
+            width: 40%;
+        }
+
+        .detalle-tabla td:last-child { color: #0f172a; }
+
+        .detalle-detalles {
+            background: #f8fafc;
+            border-radius: 10px;
+            padding: 16px;
+            font-size: 14px;
+            color: #475569;
+            line-height: 1.7;
+            border-left: 3px solid #0d9488;
+        }
+
+        .stock-indicator {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .stock-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: #10b981;
+        }
+
+        .stock-dot.bajo { background: #f59e0b; }
+        .stock-dot.agotado { background: #ef4444; }
+
+        .btn-carrito {
+            background: #0d9488;
+            color: white;
+            border: none;
+            padding: 14px 28px;
+            border-radius: 10px;
+            font-size: 15px;
+            font-weight: 700;
+            cursor: pointer;
+            width: 100%;
+            transition: background 0.2s, transform 0.1s;
+        }
+
+        .btn-carrito:hover { background: #0f766e; }
+        .btn-carrito:active { transform: scale(0.98); }
+
+        .btn-volver {
+            background: transparent;
+            color: #0d9488;
+            border: 1.5px solid #0d9488;
+            padding: 12px 28px;
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            width: 100%;
+            transition: background 0.2s;
+            text-align: center;
+            display: block;
+            text-decoration: none;
+        }
+
+        .btn-volver:hover { background: #f0fdfa; }
+
+        .cargando {
+            text-align: center;
+            padding: 60px;
+            color: #64748b;
+            font-size: 15px;
+        }
+
+        @media (max-width: 700px) {
+            .detalle-card { grid-template-columns: 1fr; gap: 24px; }
+            .detalle-container { padding: 20px; }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>Dr. Tech</h1>
+        <p>Detalle del Producto</p>
+    </header>
+
+    <nav>
+        <a href="index.html">Inicio</a>
+        <a href="productos.html">Productos</a>
+        <a href="clientes.html">Clientes</a>
+        <a href="servicio_tecnico.html">Servicio Técnico</a>
+        <a href="reportes.html">Reportes</a>
+    </nav>
+
+    <div class="detalle-container">
+        <div class="breadcrumb">
+            <a href="index.html">Inicio</a> → 
+            <a href="productos.html">Productos</a> → 
+            <span id="breadcrumb-nombre">Cargando...</span>
+        </div>
+
+        <div id="cargando" class="cargando">Cargando producto...</div>
+
+        <div class="detalle-card" id="detalleCard" style="display:none;">
+
+            <div class="producto-imagen-placeholder">
+                <div class="icono-grande" id="iconoProducto">💻</div>
+                <p id="tipoProducto">Producto</p>
+            </div>
+
+            <div class="detalle-info">
+                <span class="detalle-badge" id="badgeEstado">Nuevo</span>
+                <div class="detalle-nombre" id="nombreProducto">—</div>
+                <div class="detalle-marca" id="marcaProducto">—</div>
+                <div class="detalle-precio" id="precioProducto">$0.00</div>
+
+                <table class="detalle-tabla">
+                    <tr><td>Modelo</td><td id="modeloProducto">—</td></tr>
+                    <tr><td>Serie</td><td id="serieProducto">—</td></tr>
+                    <tr><td>Código</td><td id="codigoProducto">—</td></tr>
+                    <tr><td>Disponibilidad</td><td><div class="stock-indicator"><div class="stock-dot" id="stockDot"></div><span id="stockTexto">—</span></div></td></tr>
+                </table>
+
+                <div class="detalle-detalles" id="detallesProducto">—</div>
+
+                <button class="btn-carrito" onclick="agregarAlCarrito()">🛒 Agregar al carrito</button>
+                <a href="productos.html" class="btn-volver">← Volver al catálogo</a>
+            </div>
+
+        </div>
+    </div>
+
+    <footer>
+        <p>© 2026 - Dr. Tech</p>
+    </footer>
+
+    <script>
+        const API = 'https://drtech-production.up.railway.app';
+        let productoActual = null;
+
+        const iconos = {
+            'laptop': '💻', 'computadora': '🖥️', 'monitor': '🖥️',
+            'mouse': '🖱️', 'teclado': '⌨️', 'impresora': '🖨️',
+            'tablet': '📱', 'webcam': '📷', 'auriculares': '🎧',
+            'disco': '💾', 'memoria': '🔌', 'default': '🔧'
+        };
+
+        function getIcono(nombre) {
+            const n = nombre.toLowerCase();
+            for (const key in iconos) {
+                if (n.includes(key)) return iconos[key];
+            }
+            return iconos.default;
+        }
+
+        async function cargarProducto() {
+            const params = new URLSearchParams(window.location.search);
+            const codigo = params.get('codigo');
+
+            if (!codigo) {
+                document.getElementById('cargando').textContent = 'No se especificó un producto.';
+                return;
+            }
+
+            try {
+                const res = await fetch(`${API}/productos/${codigo}`);
+                const p = await res.json();
+
+                if (p.error) {
+                    document.getElementById('cargando').textContent = 'Producto no encontrado.';
+                    return;
+                }
+
+                productoActual = p;
+                document.getElementById('cargando').style.display = 'none';
+                document.getElementById('detalleCard').style.display = 'grid';
+
+                document.getElementById('breadcrumb-nombre').textContent = p.productos;
+                document.getElementById('nombreProducto').textContent = p.productos;
+                document.getElementById('marcaProducto').textContent = p.marca;
+                document.getElementById('precioProducto').textContent = `$${parseFloat(p.precio).toFixed(2)}`;
+                document.getElementById('modeloProducto').textContent = p.modelo;
+                document.getElementById('serieProducto').textContent = p.serie;
+                document.getElementById('codigoProducto').textContent = p.codigo;
+                document.getElementById('detallesProducto').textContent = p.detalles;
+                document.getElementById('iconoProducto').textContent = getIcono(p.productos);
+                document.getElementById('tipoProducto').textContent = p.productos;
+                document.title = `${p.productos} - Dr. Tech`;
+
+                const badge = document.getElementById('badgeEstado');
+                badge.textContent = p.estado;
+                badge.className = `detalle-badge ${p.estado === 'Nuevo' ? 'badge-nuevo' : 'badge-usado'}`;
+
+                const cantidad = parseInt(p.cantidad);
+                const dot = document.getElementById('stockDot');
+                const texto = document.getElementById('stockTexto');
+                if (cantidad === 0) {
+                    dot.className = 'stock-dot agotado';
+                    texto.textContent = 'Sin stock';
+                } else if (cantidad <= 5) {
+                    dot.className = 'stock-dot bajo';
+                    texto.textContent = `Pocas unidades (${cantidad})`;
+                } else {
+                    dot.className = 'stock-dot';
+                    texto.textContent = `En stock (${cantidad} unidades)`;
+                }
+
+            } catch (err) {
+                document.getElementById('cargando').textContent = 'Error cargando el producto.';
+            }
+        }
+
+    function agregarAlCarrito() {
+    if (!productoActual) return;
+
+    // Guardar en localStorage para compartir con productos.html
+    let carrito = JSON.parse(localStorage.getItem('carrito_drtech') || '[]');
+    const existe = carrito.find(p => p.codigo === productoActual.codigo);
+    if (existe) {
+        existe.qty += 1;
+    } else {
+        carrito.push({ ...productoActual, qty: 1 });
+    }
+    localStorage.setItem('carrito_drtech', JSON.stringify(carrito));
+
+    const total = carrito.reduce((a, p) => a + p.qty, 0);
+    alert(`✅ "${productoActual.productos}" agregado al carrito (${total} items en total)`);
+}
+        cargarProducto();
+    </script>
+
+</body>
+</html>

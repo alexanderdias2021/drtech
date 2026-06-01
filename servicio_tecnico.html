@@ -1,0 +1,741 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Servicio Técnico - Dr. Tech</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .st-container {
+            padding: 30px 40px 100px;
+            background: #f8fafc;
+        }
+
+        .st-tabs {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 28px;
+        }
+
+        .st-tab {
+            padding: 10px 22px;
+            border-radius: 8px;
+            border: 1px solid #e2e8f0;
+            background: #fff;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            color: #64748b;
+            transition: all 0.2s;
+        }
+
+        .st-tab.activo {
+            background: #0d9488;
+            color: #fff;
+            border-color: #0d9488;
+        }
+
+        .st-seccion { display: none; }
+        .st-seccion.activo { display: block; }
+
+        .form-card {
+            background: #fff;
+            border: 1px solid #e2e8f0;
+            border-radius: 16px;
+            padding: 32px;
+            max-width: 600px;
+        }
+
+        .form-card h3 {
+            font-size: 18px;
+            font-weight: 700;
+            color: #0f172a;
+            margin-bottom: 24px;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+        }
+
+        .form-grupo {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .form-grupo.full { grid-column: span 2; }
+
+        .form-grupo label {
+            font-size: 12px;
+            font-weight: 600;
+            color: #475569;
+            text-transform: uppercase;
+            letter-spacing: 0.4px;
+        }
+
+        .form-grupo input,
+        .form-grupo textarea {
+            padding: 11px 14px;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 14px;
+            color: #0f172a;
+            outline: none;
+            background: #f8fafc;
+            transition: border-color 0.2s;
+            font-family: inherit;
+        }
+
+        .form-grupo input:focus,
+        .form-grupo textarea:focus {
+            border-color: #0d9488;
+            background: #fff;
+        }
+
+        .form-grupo textarea { resize: vertical; min-height: 80px; }
+
+        .btn-registrar {
+            background: #0d9488;
+            color: white;
+            border: none;
+            padding: 13px 28px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 20px;
+            transition: background 0.2s;
+        }
+
+        .btn-registrar:hover { background: #0f766e; }
+
+        .mensaje-ok {
+            background: #d1fae5;
+            color: #065f46;
+            border-radius: 8px;
+            padding: 10px 14px;
+            font-size: 13px;
+            margin-top: 14px;
+            display: none;
+        }
+
+        .mensaje-err {
+            background: #fee2e2;
+            color: #991b1b;
+            border-radius: 8px;
+            padding: 10px 14px;
+            font-size: 13px;
+            margin-top: 14px;
+            display: none;
+        }
+
+        /* Modal registro cliente */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-overlay.activo { display: flex; }
+
+        .modal-registro {
+            background: #fff;
+            border-radius: 16px;
+            padding: 32px;
+            width: 90%;
+            max-width: 500px;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .modal-registro h3 {
+            font-size: 18px;
+            font-weight: 700;
+            color: #0f172a;
+            margin-bottom: 6px;
+        }
+
+        .modal-registro p {
+            font-size: 13px;
+            color: #64748b;
+            margin-bottom: 20px;
+        }
+
+        .modal-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .modal-grupo {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .modal-grupo.full { grid-column: span 2; }
+
+        .modal-grupo label {
+            font-size: 11px;
+            font-weight: 600;
+            color: #475569;
+            text-transform: uppercase;
+        }
+
+        .modal-grupo input {
+            padding: 10px 12px;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 13px;
+            outline: none;
+            background: #f8fafc;
+        }
+
+        .modal-grupo input:focus { border-color: #0d9488; background: #fff; }
+
+        .modal-botones {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn-modal-ok {
+            background: #0d9488;
+            color: white;
+            border: none;
+            padding: 11px 24px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            flex: 1;
+        }
+
+        .btn-modal-ok:hover { background: #0f766e; }
+
+        .btn-modal-cancel {
+            background: transparent;
+            color: #64748b;
+            border: 1px solid #e2e8f0;
+            padding: 11px 24px;
+            border-radius: 8px;
+            font-size: 14px;
+            cursor: pointer;
+            flex: 1;
+        }
+
+        .tabla-container {
+            background: #fff;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .tabla-header {
+            padding: 16px 20px;
+            border-bottom: 1px solid #e2e8f0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .tabla-header h3 {
+            font-size: 15px;
+            font-weight: 700;
+            color: #0f172a;
+        }
+
+        .buscador-st {
+            padding: 9px 14px;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 13px;
+            outline: none;
+            width: 220px;
+        }
+
+        .buscador-st:focus { border-color: #0d9488; }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+        }
+
+        thead { background: #f8fafc; }
+
+        th {
+            padding: 12px 16px;
+            text-align: left;
+            font-weight: 600;
+            color: #475569;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.4px;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        td {
+            padding: 12px 16px;
+            color: #0f172a;
+            border-bottom: 0.5px solid #f1f5f9;
+        }
+
+        tr:last-child td { border-bottom: none; }
+        tr:hover td { background: #f8fafc; }
+
+        .badge-codigo {
+            background: #e0f2fe;
+            color: #0369a1;
+            padding: 3px 8px;
+            border-radius: 6px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+        .badge-pendiente {
+            background: #fef9c3;
+            color: #854d0e;
+            padding: 3px 10px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+        .badge-listo {
+            background: #d1fae5;
+            color: #065f46;
+            padding: 3px 10px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+        .btn-editar {
+            background: #e0f2fe;
+            color: #0369a1;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 6px;
+            font-size: 12px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        .btn-eliminar-td {
+            background: #fee2e2;
+            color: #ef4444;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 6px;
+            font-size: 12px;
+            cursor: pointer;
+            font-weight: 600;
+            margin-left: 4px;
+        }
+
+        .sin-datos {
+            text-align: center;
+            padding: 40px;
+            color: #94a3b8;
+            font-size: 14px;
+        }
+
+        .resumen-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .resumen-card {
+            background: #fff;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 20px;
+        }
+
+        .resumen-card .label {
+            font-size: 12px;
+            color: #64748b;
+            font-weight: 600;
+            text-transform: uppercase;
+            margin-bottom: 8px;
+        }
+
+        .resumen-card .valor {
+            font-size: 28px;
+            font-weight: 800;
+            color: #0d9488;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>Dr. Tech</h1>
+        <p>Gestión de Servicio Técnico</p>
+    </header>
+
+    <nav>
+        <a href="index.html">Inicio</a>
+        <a href="productos.html">Productos</a>
+        <a href="clientes.html">Clientes</a>
+        <a href="reportes.html">Reportes</a>
+        <a href="servicio_tecnico.html" class="activo">Servicio Técnico</a>
+    </nav>
+
+    <!-- Modal registro cliente -->
+    <div class="modal-overlay" id="modalCliente">
+        <div class="modal-registro">
+            <h3>⚠️ Cliente no registrado</h3>
+            <p>La cédula ingresada no existe. Completa los datos para registrar al cliente y continuar.</p>
+            <div class="modal-grid">
+                <div class="modal-grupo">
+                    <label>Nombre completo</label>
+                    <input type="text" id="m-nombre" placeholder="Juan Pérez" required>
+                </div>
+                <div class="modal-grupo">
+                    <label>Usuario</label>
+                    <input type="text" id="m-usuario" placeholder="juanp" required>
+                </div>
+                <div class="modal-grupo full">
+                    <label>Correo electrónico</label>
+                    <input type="email" id="m-correo" placeholder="correo@email.com" required>
+                </div>
+                <div class="modal-grupo">
+                    <label>Contraseña</label>
+                    <input type="password" id="m-contrasena" placeholder="••••••••" required>
+                </div>
+                <div class="modal-grupo">
+                    <label>Teléfono</label>
+                    <input type="tel" id="m-telefono" placeholder="0987654321" required>
+                </div>
+                <div class="modal-grupo full">
+                    <label>Dirección</label>
+                    <input type="text" id="m-direccion" placeholder="Av. Principal 123" required>
+                </div>
+                <div class="modal-grupo full">
+                    <label>Ciudad</label>
+                    <input type="text" id="m-ciudad" placeholder="Quito" required>
+                </div>
+            </div>
+            <div class="modal-botones">
+                <button class="btn-modal-ok" onclick="registrarClienteYServicio()">Registrar y continuar</button>
+                <button class="btn-modal-cancel" onclick="cerrarModal()">Cancelar</button>
+            </div>
+            <div class="mensaje-err" id="msgErrModal" style="margin-top:12px;"></div>
+        </div>
+    </div>
+
+    <div class="st-container">
+
+        <div class="st-tabs">
+            <button class="st-tab activo" onclick="mostrarTab('registrar', this)">➕ Registrar equipo</button>
+            <button class="st-tab" onclick="mostrarTab('listar', this)">📋 Ver servicios</button>
+        </div>
+
+        <div class="st-seccion activo" id="tab-registrar">
+            <div class="form-card">
+                <h3>Registrar nuevo servicio técnico</h3>
+                <form id="formServicio">
+                    <div class="form-grid">
+                        <div class="form-grupo">
+                            <label>Código</label>
+                            <input type="number" id="codigo" placeholder="Ej: 1001" required>
+                        </div>
+                        <div class="form-grupo">
+                            <label>Cédula del cliente</label>
+                            <input type="number" id="cedulaserv" placeholder="Ej: 1001234567" required>
+                        </div>
+                        <div class="form-grupo">
+                            <label>Marca</label>
+                            <input type="text" id="marca" placeholder="Ej: HP, Dell, Asus" required>
+                        </div>
+                        <div class="form-grupo">
+                            <label>Modelo</label>
+                            <input type="text" id="modelo" placeholder="Ej: Pavilion 15" required>
+                        </div>
+                        <div class="form-grupo">
+                            <label>Fecha de ingreso</label>
+                            <input type="date" id="fechain" required>
+                        </div>
+                        <div class="form-grupo">
+                            <label>Fecha de salida estimada</label>
+                            <input type="date" id="fechasal">
+                        </div>
+                        <div class="form-grupo full">
+                            <label>Descripción del problema</label>
+                            <textarea id="problema" placeholder="Describe el problema del equipo..." required></textarea>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn-registrar">Registrar servicio</button>
+                </form>
+                <div class="mensaje-ok" id="msgOk">✅ Servicio registrado correctamente</div>
+                <div class="mensaje-err" id="msgErr"></div>
+            </div>
+        </div>
+
+        <div class="st-seccion" id="tab-listar">
+            <div class="resumen-cards" id="cardsResumen"></div>
+            <div class="tabla-container">
+                <div class="tabla-header">
+                    <h3>Servicios técnicos registrados</h3>
+                    <input type="text" class="buscador-st" id="buscadorST" placeholder="🔍 Buscar..." oninput="filtrarST()">
+                </div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Código</th>
+                            <th>Cliente</th>
+                            <th>Marca / Modelo</th>
+                            <th>Problema</th>
+                            <th>Fecha ingreso</th>
+                            <th>Fecha salida</th>
+                            <th>Estado</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tablaST"></tbody>
+                </table>
+            </div>
+        </div>
+
+    </div>
+
+    <footer>
+        <p>© 2026 - Dr. Tech</p>
+    </footer>
+
+    <script>
+        const API = '';
+        let servicios = [];
+        let datosPendientes = null;
+
+        function mostrarTab(id, btn) {
+            document.querySelectorAll('.st-seccion').forEach(s => s.classList.remove('activo'));
+            document.querySelectorAll('.st-tab').forEach(t => t.classList.remove('activo'));
+            document.getElementById('tab-' + id).classList.add('activo');
+            btn.classList.add('activo');
+            if (id === 'listar') cargarServicios();
+        }
+
+        function cerrarModal() {
+            document.getElementById('modalCliente').classList.remove('activo');
+            datosPendientes = null;
+        }
+
+        document.getElementById('formServicio').addEventListener('submit', async function(e) {
+            e.preventDefault();
+
+            const cedula = document.getElementById('cedulaserv').value;
+
+            datosPendientes = {
+                codigo:     document.getElementById('codigo').value,
+                cedulaserv: cedula,
+                marca:      document.getElementById('marca').value,
+                modelo:     document.getElementById('modelo').value,
+                fechain:    document.getElementById('fechain').value,
+                fechasal:   document.getElementById('fechasal').value || null,
+                problema:   document.getElementById('problema').value
+            };
+
+            try {
+                const verificar = await fetch(`${API}/verificar-cliente/${cedula}`);
+                const resultado = await verificar.json();
+
+                if (!resultado.existe) {
+                    document.getElementById('modalCliente').classList.add('activo');
+                    return;
+                }
+
+                await guardarServicio();
+
+            } catch (err) {
+                document.getElementById('msgErr').textContent = 'No se pudo conectar con el servidor.';
+                document.getElementById('msgErr').style.display = 'block';
+            }
+        });
+
+        async function registrarClienteYServicio() {
+            const nombre    = document.getElementById('m-nombre').value.trim();
+            const usuario   = document.getElementById('m-usuario').value.trim();
+            const correo    = document.getElementById('m-correo').value.trim();
+            const contrasena = document.getElementById('m-contrasena').value.trim();
+            const telefono  = document.getElementById('m-telefono').value.trim();
+            const direccion = document.getElementById('m-direccion').value.trim();
+            const ciudad    = document.getElementById('m-ciudad').value.trim();
+
+            if (!nombre || !usuario || !correo || !contrasena || !telefono || !direccion || !ciudad) {
+                const err = document.getElementById('msgErrModal');
+                err.textContent = 'Por favor completa todos los campos.';
+                err.style.display = 'block';
+                return;
+            }
+
+            try {
+                const resCliente = await fetch(`${API}/registrar`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        cedula:     datosPendientes.cedulaserv,
+                        nombre, usuario, correo,
+                        contraseña: contrasena,
+                        telefono, direccion, ciudad
+                    })
+                });
+                const resultCliente = await resCliente.json();
+
+                if (!resultCliente.success) {
+                    const err = document.getElementById('msgErrModal');
+                    err.textContent = 'Error al registrar cliente: ' + resultCliente.error;
+                    err.style.display = 'block';
+                    return;
+                }
+
+                document.getElementById('modalCliente').classList.remove('activo');
+                await guardarServicio();
+
+            } catch (err) {
+                const e = document.getElementById('msgErrModal');
+                e.textContent = 'Error de conexión con el servidor.';
+                e.style.display = 'block';
+            }
+        }
+
+        async function guardarServicio() {
+            try {
+                const res = await fetch(`${API}/servicios/registrar`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(datosPendientes)
+                });
+                const result = await res.json();
+
+                if (result.success) {
+                    document.getElementById('msgOk').style.display = 'block';
+                    document.getElementById('msgErr').style.display = 'none';
+                    document.getElementById('formServicio').reset();
+                    datosPendientes = null;
+                    setTimeout(() => document.getElementById('msgOk').style.display = 'none', 3000);
+                } else {
+                    document.getElementById('msgErr').textContent = 'Error: ' + result.error;
+                    document.getElementById('msgErr').style.display = 'block';
+                }
+            } catch (err) {
+                document.getElementById('msgErr').textContent = 'No se pudo conectar con el servidor.';
+                document.getElementById('msgErr').style.display = 'block';
+            }
+        }
+
+        async function cargarServicios() {
+            try {
+                const res = await fetch(`${API}/servicios`);
+                servicios = await res.json();
+                renderTabla(servicios);
+                renderCards(servicios);
+            } catch (err) {
+                document.getElementById('tablaST').innerHTML = `<tr><td colspan="8" class="sin-datos">Error cargando servicios</td></tr>`;
+            }
+        }
+
+        function renderTabla(datos) {
+            const tbody = document.getElementById('tablaST');
+            tbody.innerHTML = '';
+            if (datos.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="8" class="sin-datos">No hay servicios registrados</td></tr>`;
+                return;
+            }
+            datos.forEach(s => {
+                const listo = s.fechasal && new Date(s.fechasal) <= new Date();
+                tbody.innerHTML += `
+                    <tr>
+                        <td><span class="badge-codigo">${s.codigo}</span></td>
+                        <td>${s.nombre || s.cedulaserv}<br><small style="color:#94a3b8">${s.telefono || ''}</small></td>
+                        <td>${s.marca}<br><small style="color:#94a3b8">${s.modelo}</small></td>
+                        <td style="max-width:180px">${s.problema}</td>
+                        <td>${s.fechain ? s.fechain.split('T')[0] : '—'}</td>
+                        <td>${s.fechasal ? s.fechasal.split('T')[0] : '—'}</td>
+                        <td><span class="${listo ? 'badge-listo' : 'badge-pendiente'}">${listo ? 'Listo' : 'En proceso'}</span></td>
+                        <td>
+                            <button class="btn-editar" onclick="editarServicio(${s.codigo}, '${s.fechasal ? s.fechasal.split('T')[0] : ''}', \`${s.problema}\`)">Editar</button>
+                            <button class="btn-eliminar-td" onclick="eliminarServicio(${s.codigo})">Eliminar</button>
+                        </td>
+                    </tr>`;
+            });
+        }
+
+        function renderCards(datos) {
+            const total = datos.length;
+            const enProceso = datos.filter(s => !s.fechasal || new Date(s.fechasal) > new Date()).length;
+            const listos = total - enProceso;
+            document.getElementById('cardsResumen').innerHTML = `
+                <div class="resumen-card">
+                    <div class="label">Total servicios</div>
+                    <div class="valor">${total}</div>
+                </div>
+                <div class="resumen-card">
+                    <div class="label">En proceso</div>
+                    <div class="valor" style="color:#d97706">${enProceso}</div>
+                </div>
+                <div class="resumen-card">
+                    <div class="label">Listos</div>
+                    <div class="valor" style="color:#059669">${listos}</div>
+                </div>
+            `;
+        }
+
+        function filtrarST() {
+            const texto = document.getElementById('buscadorST').value.toLowerCase();
+            const filtrados = servicios.filter(s =>
+                String(s.codigo).includes(texto) ||
+                (s.nombre && s.nombre.toLowerCase().includes(texto)) ||
+                s.marca.toLowerCase().includes(texto) ||
+                s.modelo.toLowerCase().includes(texto)
+            );
+            renderTabla(filtrados);
+        }
+
+        async function editarServicio(codigo, fechasal, problema) {
+            const nuevaFecha = prompt('Fecha de salida (YYYY-MM-DD):', fechasal);
+            if (nuevaFecha === null) return;
+            const nuevoProblema = prompt('Descripción del problema:', problema);
+            if (nuevoProblema === null) return;
+            try {
+                const res = await fetch(`${API}/servicios/actualizar/${codigo}`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ fechasal: nuevaFecha, problema: nuevoProblema })
+                });
+                const result = await res.json();
+                if (result.success) cargarServicios();
+                else alert('Error: ' + result.error);
+            } catch (err) {
+                alert('No se pudo conectar con el servidor.');
+            }
+        }
+
+        async function eliminarServicio(codigo) {
+            if (!confirm(`¿Eliminar el servicio #${codigo}?`)) return;
+            try {
+                const res = await fetch(`${API}/servicios/eliminar/${codigo}`, { method: 'DELETE' });
+                const result = await res.json();
+                if (result.success) cargarServicios();
+                else alert('Error: ' + result.error);
+            } catch (err) {
+                alert('No se pudo conectar con el servidor.');
+            }
+        }
+    </script>
+
+</body>
+</html>

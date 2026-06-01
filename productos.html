@@ -57,11 +57,6 @@
         border-color: #0d9488;
     }
 
-    .producto-icono {
-        font-size: 36px;
-        margin-bottom: 6px;
-    }
-
     .producto-card h3 {
         font-size: 15px;
         font-weight: 700;
@@ -116,6 +111,12 @@
         color: #94a3b8;
     }
 
+    .stock-agotado {
+        font-size: 12px;
+        color: #ef4444;
+        font-weight: 600;
+    }
+
     .btn-agregar {
         background: #0d9488;
         color: white;
@@ -132,6 +133,30 @@
 
     .btn-agregar:hover { background: #0f766e; }
     .btn-agregar:active { transform: scale(0.97); }
+    .btn-agregar:disabled {
+        background: #cbd5e1;
+        cursor: not-allowed;
+        transform: none;
+    }
+
+    .btn-detalle {
+        background: #0f766e;
+        color: white;
+        border: none;
+        padding: 11px 20px;
+        border-radius: 8px;
+        font-size: 13px;
+        font-weight: 600;
+        cursor: pointer;
+        width: 100%;
+        margin-top: 8px;
+        transition: background 0.2s;
+        text-decoration: none;
+        display: block;
+        text-align: center;
+    }
+
+    .btn-detalle:hover { background: #0d9488; }
 
     .carrito-flotante {
         position: fixed;
@@ -265,14 +290,7 @@
         color: #64748b;
         font-size: 15px;
     }
-
-    .carrito-vacio {
-        text-align: center;
-        padding: 30px;
-        color: #94a3b8;
-        font-size: 14px;
-    }
-</style>
+    </style>
 </head>
 <body>
 
@@ -283,22 +301,24 @@
 
     <nav>
         <a href="index.html">Inicio</a>
-        <a href="productos.html">Productos</a>
+        <a href="productos.html" class="activo">Productos</a>
         <a href="clientes.html">Clientes</a>
         <a href="reportes.html">Reportes</a>
+        <a href="servicio_tecnico.html">Servicio Técnico</a>
     </nav>
 
     <div class="filtros">
-    <input type="text" id="buscador" placeholder="Buscar producto..." oninput="filtrarProductos()">
-    <span id="totalProductos"></span>
-</div>
+        <input type="text" id="buscador" placeholder="🔍 Buscar producto..." oninput="filtrarProductos()">
+        <span id="totalProductos"></span>
+    </div>
+
     <div id="cargando">Cargando productos...</div>
     <div class="productos-grid" id="productosGrid"></div>
 
     <button class="carrito-flotante" onclick="abrirCarrito()">
-    🛒 Carrito
-    <span class="carrito-badge" id="contadorCarrito">0</span>
-</button>
+        🛒 Carrito
+        <span class="carrito-badge" id="contadorCarrito">0</span>
+    </button>
 
     <div class="modal-overlay" id="modalCarrito">
         <div class="modal">
@@ -313,87 +333,107 @@
     <footer>
         <p>© 2026 - Dr. Tech</p>
     </footer>
-<script>
-    let carrito = [];
 
-    async function cargarProductos() {
-        try {
-            const res = await fetch('https://romantic-joy-production-c58c.up.railway.app/productos');
-            const productos = await res.json();
-            document.getElementById('cargando').style.display = 'none';
+    <script>
+        const API = 'https://drtech-production.up.railway.app';
+        let carrito = JSON.parse(localStorage.getItem('carrito_drtech') || '[]');
 
-            const grid = document.getElementById('productosGrid');
-            productos.forEach(p => {
-                const card = document.createElement('div');
-                card.className = 'producto-card';
-                card.innerHTML = `
-                    <h3>${p.productos}</h3>
-                    <div class="marca">${p.marca}</div>
-                    <div class="modelo">${p.modelo}</div>
-                    <div class="detalles">${p.detalles}</div>
-                    <div class="precio">$${parseFloat(p.precio).toFixed(2)}</div>
-                    <span class="estado ${p.estado === 'Nuevo' ? 'estado-nuevo' : 'estado-usado'}">${p.estado}</span>
-                    <div class="cantidad">Stock: ${p.cantidad} unidades</div>
-                    <button class="btn-agregar" onclick='agregarAlCarrito(${JSON.stringify(p)})'>
-                        Agregar al carrito
-                    </button>
-                `;
-                grid.appendChild(card);
-            });
-
-            document.getElementById('totalProductos').textContent = `${productos.length} productos encontrados`;
-
-        } catch (err) {
-            document.getElementById('cargando').textContent = 'Error cargando productos. Verifica que el servidor esté corriendo.';
-        }
-    }
-
-    function agregarAlCarrito(producto) {
-        const existe = carrito.find(p => p.codigo === producto.codigo);
-        if (existe) {
-            existe.qty += 1;
-        } else {
-            carrito.push({ ...producto, qty: 1 });
-        }
         document.getElementById('contadorCarrito').textContent = carrito.reduce((a, p) => a + p.qty, 0);
-        alert(`"${producto.productos}" agregado al carrito ✓`);
-    }
 
-    function abrirCarrito() {
-        const lista = document.getElementById('listaCarrito');
-        lista.innerHTML = '';
+        async function cargarProductos() {
+            document.getElementById('productosGrid').innerHTML = '';
+            document.getElementById('cargando').style.display = 'block';
 
-        if (carrito.length === 0) {
-            lista.innerHTML = '<p style="color:#94a3b8;text-align:center;padding:20px;">El carrito está vacío</p>';
-            document.getElementById('totalCarrito').textContent = '';
-        } else {
-            let total = 0;
-            carrito.forEach((p, i) => {
-                const subtotal = p.qty * parseFloat(p.precio);
-                total += subtotal;
-                lista.innerHTML += `
-                    <div class="carrito-item">
-                        <span class="carrito-item-nombre">${p.productos} x${p.qty}</span>
-                        <span class="carrito-item-precio">$${subtotal.toFixed(2)}</span>
-                        <button class="btn-eliminar" onclick="eliminarDelCarrito(${i})">✕</button>
-                    </div>
-                `;
-            });
-            document.getElementById('totalCarrito').textContent = `Total: $${total.toFixed(2)}`;
+            try {
+                const res = await fetch(`${API}/productos`);
+                const productos = await res.json();
+                document.getElementById('cargando').style.display = 'none';
+
+                const grid = document.getElementById('productosGrid');
+                productos.forEach(p => {
+                    const agotado = parseInt(p.cantidad) === 0;
+                    const card = document.createElement('div');
+                    card.className = 'producto-card';
+                    card.innerHTML = `
+                        <h3>${p.productos}</h3>
+                        <div class="marca">${p.marca}</div>
+                        <div class="modelo">${p.modelo}</div>
+                        <div class="detalles">${p.detalles}</div>
+                        <div class="precio">$${parseFloat(p.precio).toFixed(2)}</div>
+                        <span class="estado ${p.estado === 'Nuevo' ? 'estado-nuevo' : 'estado-usado'}">${p.estado}</span>
+                        ${agotado
+                            ? `<div class="stock-agotado">⚠️ Sin stock</div>`
+                            : `<div class="cantidad">Stock: ${p.cantidad} unidades</div>`
+                        }
+                        <a href="detalle_producto.html?codigo=${p.codigo}" class="btn-detalle">Ver detalle</a>
+                        <button class="btn-agregar" 
+                            onclick='agregarAlCarrito(${JSON.stringify(p)})'
+                            ${agotado ? 'disabled' : ''}>
+                            ${agotado ? 'Sin stock' : 'Agregar al carrito'}
+                        </button>
+                    `;
+                    grid.appendChild(card);
+                });
+
+                document.getElementById('totalProductos').textContent = `${productos.length} productos encontrados`;
+
+            } catch (err) {
+                document.getElementById('cargando').textContent = 'Error cargando productos. Verifica que el servidor esté corriendo.';
+            }
         }
 
-        document.getElementById('modalCarrito').classList.add('activo');
-    }
+        function agregarAlCarrito(producto) {
+            if (parseInt(producto.cantidad) === 0) {
+                alert('Este producto no tiene stock disponible.');
+                return;
+            }
+            const existe = carrito.find(p => p.codigo === producto.codigo);
+            if (existe) {
+                existe.qty += 1;
+            } else {
+                carrito.push({ ...producto, qty: 1 });
+            }
+            localStorage.setItem('carrito_drtech', JSON.stringify(carrito));
+            document.getElementById('contadorCarrito').textContent = carrito.reduce((a, p) => a + p.qty, 0);
+            alert(`"${producto.productos}" agregado al carrito ✓`);
+        }
 
-    function cerrarCarrito() {
-        document.getElementById('modalCarrito').classList.remove('activo');
-    }
+        function abrirCarrito() {
+            const lista = document.getElementById('listaCarrito');
+            lista.innerHTML = '';
 
-    function eliminarDelCarrito(index) {
-        carrito.splice(index, 1);
-        document.getElementById('contadorCarrito').textContent = carrito.reduce((a, p) => a + p.qty, 0);
-        abrirCarrito();
-    }
+            if (carrito.length === 0) {
+                lista.innerHTML = '<p style="color:#94a3b8;text-align:center;padding:20px;">El carrito está vacío</p>';
+                document.getElementById('totalCarrito').textContent = '';
+            } else {
+                let total = 0;
+                carrito.forEach((p, i) => {
+                    const subtotal = p.qty * parseFloat(p.precio);
+                    total += subtotal;
+                    lista.innerHTML += `
+                        <div class="carrito-item">
+                            <span class="carrito-item-nombre">${p.productos} x${p.qty}</span>
+                            <span class="carrito-item-precio">$${subtotal.toFixed(2)}</span>
+                            <button class="btn-eliminar" onclick="eliminarDelCarrito(${i})">✕</button>
+                        </div>
+                    `;
+                });
+                document.getElementById('totalCarrito').textContent = `Total: $${total.toFixed(2)}`;
+            }
+
+            document.getElementById('modalCarrito').classList.add('activo');
+        }
+
+        function cerrarCarrito() {
+            document.getElementById('modalCarrito').classList.remove('activo');
+        }
+
+        function eliminarDelCarrito(index) {
+            carrito.splice(index, 1);
+            localStorage.setItem('carrito_drtech', JSON.stringify(carrito));
+            document.getElementById('contadorCarrito').textContent = carrito.reduce((a, p) => a + p.qty, 0);
+            abrirCarrito();
+        }
 async function confirmarCompra() {
     if (carrito.length === 0) {
         alert('El carrito está vacío');
@@ -401,13 +441,13 @@ async function confirmarCompra() {
     }
 
     const cedula = prompt('Ingresa tu número de cédula para confirmar la compra:');
-
     if (!cedula || cedula.trim() === '') {
         alert('Debes ingresar tu cédula para continuar.');
         return;
     }
+
     try {
-        const verificar = await fetch(`https://romantic-joy-production-c58c.up.railway.app/verificar-cliente/${cedula.trim()}`);
+        const verificar = await fetch(`${API}/verificar-cliente/${cedula.trim()}`);
         const cliente = await verificar.json();
 
         if (!cliente.existe) {
@@ -415,29 +455,32 @@ async function confirmarCompra() {
                 '❌ No encontramos una cuenta con esa cédula.\n\n' +
                 '¿Deseas registrarte ahora para poder comprar?'
             );
-            if (ir) {
-                window.location.href = 'clientes.html';
-            }
+            if (ir) window.location.href = 'clientes.html';
             return;
         }
-
     } catch (err) {
-        alert('No se pudo verificar el cliente. Verifica que el servidor esté corriendo.');
+        alert('No se pudo verificar el cliente.');
         return;
     }
+
     try {
-        const res = await fetch('https://romantic-joy-production-c58c.up.railway.app/comprar', {
+        // Guardar items ANTES de vaciar el carrito
+        const itemsParaComprar = [...carrito];
+
+        const res = await fetch(`${API}/comprar`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ cedula: cedula.trim(), items: carrito })
+            body: JSON.stringify({ cedula: cedula.trim(), items: itemsParaComprar })
         });
 
         const resultado = await res.json();
 
         if (resultado.success) {
             carrito = [];
+            localStorage.removeItem('carrito_drtech');
             document.getElementById('contadorCarrito').textContent = 0;
             cerrarCarrito();
+            await cargarProductos();
             window.location.href = 'compra_exitosa.html';
         } else {
             alert('Error al procesar la compra: ' + resultado.error);
@@ -447,24 +490,25 @@ async function confirmarCompra() {
     }
 }
 
-    function filtrarProductos() {
-        const texto = document.getElementById('buscador').value.toLowerCase();
-        const cards = document.querySelectorAll('.producto-card');
-        let visibles = 0;
-        cards.forEach(card => {
-            const nombre = card.querySelector('h3').textContent.toLowerCase();
-            const marca = card.querySelector('.marca').textContent.toLowerCase();
-            if (nombre.includes(texto) || marca.includes(texto)) {
-                card.style.display = '';
-                visibles++;
-            } else {
-                card.style.display = 'none';
-            }
-        });
-        document.getElementById('totalProductos').textContent = `${visibles} productos encontrados`;
-    }
+        function filtrarProductos() {
+            const texto = document.getElementById('buscador').value.toLowerCase();
+            const cards = document.querySelectorAll('.producto-card');
+            let visibles = 0;
+            cards.forEach(card => {
+                const nombre = card.querySelector('h3').textContent.toLowerCase();
+                const marca = card.querySelector('.marca').textContent.toLowerCase();
+                if (nombre.includes(texto) || marca.includes(texto)) {
+                    card.style.display = '';
+                    visibles++;
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+            document.getElementById('totalProductos').textContent = `${visibles} productos encontrados`;
+        }
 
-    cargarProductos();
-</script>
+        cargarProductos();
+    </script>
+
 </body>
 </html>
